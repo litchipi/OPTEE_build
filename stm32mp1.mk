@@ -1,3 +1,6 @@
+# Path to EDK2 StMM component used to store UEFI variables
+CFG_STMM_PATH=$(EDK2_BIN)
+export CFG_STMM_PATH
 ################################################################################
 # Following variables defines how the NS_USER (Non Secure User - Client
 # Application), NS_KERNEL (Non Secure Kernel), S_KERNEL (Secure Kernel) and
@@ -47,6 +50,8 @@ LINUX_DTB_BIN		:= $(STM32MP1_DTS_BASENAME).dtb
 BINARIES_PATH		?= $(ROOT)/out/bin
 TFA_PATH		?= $(ROOT)/trusted-firmware-a
 U_BOOT_PATH		?= $(ROOT)/u-boot
+EDK2_PATH               	?= $(ROOT)/edk2
+EDK2_PLATFORMS_PATH     	?= $(ROOT)/edk2-platforms
 
 define install_in_binaries
 	echo "  INSTALL $(shell basename $1) to $(BINARIES_PATH)" && \
@@ -57,11 +62,11 @@ endef
 ################################################################################
 # Main targets
 ################################################################################
-all: tfa optee-os u-boot linux buildroot
+all: tfa edk2 optee-os u-boot linux buildroot
 	@$(call install_in_binaries,$(ROOT)/out-br/images/sdcard.img)
 	@echo Build for platform $(PLATFORM) completed
 
-clean: tfa-clean optee-os-clean u-boot-clean linux-clean buildroot-clean
+clean: tfa-clean edk2-clean optee-os-clean u-boot-clean linux-clean buildroot-clean
 
 include toolchain.mk
 
@@ -110,6 +115,54 @@ tfa: optee-os u-boot
 
 tfa-clean:
 	$(TFA_EXPORTS) $(MAKE) -C $(TFA_PATH) $(TFA_FLAGS) clean
+
+################################################################################
+# EDK2 (edk2 & edk2-platforms)
+################################################################################
+
+# OP-TEE OS needs StMM image to build
+.PHONY: edk2
+optee-os-common: edk2
+
+EDK2_TOOLCHAIN ?= GCC5
+EDK2_ARCH ?= ARM
+ifeq ($(DEBUG),1)
+EDK2_BUILD ?= RELEASE# DEBUG
+else
+EDK2_BUILD ?= RELEASE
+endif
+EDK2_OUT ?= $(ROOT)/out-edk2
+EDK2_BIN ?= $(EDK2_OUT)/Build/MmStandaloneRpmb/$(EDK2_BUILD)_$(EDK2_TOOLCHAIN)/FV/BL32_AP_MM.fd
+
+define edk2-env
+	export WORKSPACE=$(EDK2_OUT)
+endef
+
+define edk2-call
+	echo "========================================================================" && \
+	echo "= PATH=$(PATH)" && \
+	echo "build -n(...) -a $(EDK2_ARCH)" && \
+        echo "  -t $(EDK2_TOOLCHAIN) -p Platform/StMMRpmb/PlatformStandaloneMm.dsc" && \
+        echo "  -b $(EDK2_BUILD) -D DO_X86EMU=TRUE" && \
+	echo "========================================================================" && \
+        $(EDK2_TOOLCHAIN)_$(EDK2_ARCH)_PREFIX=$(AARCH32_CROSS_COMPILE) \
+        build -n `getconf _NPROCESSORS_ONLN` -a $(EDK2_ARCH) \
+                -t $(EDK2_TOOLCHAIN) -p Platform/StMMRpmb/PlatformStandaloneMm.dsc \
+                -b $(EDK2_BUILD) -D DO_X86EMU=TRUE
+endef
+
+.PHONY: edk2-modules
+edk2-modules:
+	mkdir -p $(EDK2_OUT) && \
+	cd $(EDK2_PATH) && \
+	git submodule init && \
+	git submodule update --init --recursive
+
+edk2-common: edk2-modules
+edk2: edk2-common
+edk2-clean: edk2-clean-common
+
+# build ... -D UART_ENABLE=YES to enable StMM UART (if patches applied)
 
 ################################################################################
 # U-Boot
