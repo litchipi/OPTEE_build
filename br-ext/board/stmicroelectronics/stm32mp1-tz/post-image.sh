@@ -28,7 +28,7 @@ GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 BOOTFS_DIR=${BASE_DIR}/target-bootfs
 rm -f ${BINARIES_DIR}/bootfs.ext2 || exit 1
 rm -rf ${BOOTFS_DIR} && mkdir -p ${BOOTFS_DIR}/boot || exit 1
-cp --dereference ${3}/uImage ${BOOTFS_DIR}/boot || exit 1
+cp --dereference ${3}/zImage ${BOOTFS_DIR}/boot/zImage.efi || exit 1
 for f in ${3}/*.dtb; do
 	test -f $f && { cp --dereference  $f ${BOOTFS_DIR}/boot || exit 1; }
 done

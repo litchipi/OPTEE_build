@@ -1,6 +1,14 @@
 # Path to EDK2 StMM component used to store UEFI variables
 CFG_STMM_PATH=$(EDK2_BIN)
 export CFG_STMM_PATH
+
+# Use RPMB to store Secure Storage filesystem
+CFG_RPMB_FS=y
+export CFG_RPMB_FS
+
+# Device number to use to access RPMB (/dev/mmcblkX)
+CFG_RPMB_FS_DEV_ID=1
+export CFG_RPMB_FS_DEV_ID
 ################################################################################
 # Following variables defines how the NS_USER (Non Secure User - Client
 # Application), NS_KERNEL (Non Secure Kernel), S_KERNEL (Secure Kernel) and
@@ -11,7 +19,7 @@ override COMPILE_NS_KERNEL := 32
 override COMPILE_S_USER    := 32
 override COMPILE_S_KERNEL  := 32
 
-PLATFORM ?= stm32mp1-157C_DK2
+PLATFORM ?= stm32mp1-157C_EV1
 OPTEE_OS_PLATFORM := $(PLATFORM)
 
 include common.mk
@@ -41,7 +49,7 @@ OPTEE_HEADER_BIN	:= tee-header_v2.stm32
 OPTEE_PAGER_BIN		:= tee-pager_v2.stm32
 OPTEE_PAGEABLE_BIN  	:= tee-pageable_v2.stm32
 U_BOOT_BIN		:= u-boot.stm32
-LINUX_KERNEL_BIN 	:= uImage
+LINUX_KERNEL_BIN 	:= zImage
 LINUX_DTB_BIN		:= $(STM32MP1_DTS_BASENAME).dtb
 
 ################################################################################
@@ -73,6 +81,7 @@ include toolchain.mk
 ################################################################################
 # OP-TEE OS
 ################################################################################
+
 optee-os: optee-os-common
 	@$(call install_in_binaries,$(OPTEE_OS_PATH)/out/arm/core/$(OPTEE_HEADER_BIN))
 	@$(call install_in_binaries,$(OPTEE_OS_PATH)/out/arm/core/$(OPTEE_PAGER_BIN))
@@ -193,7 +202,7 @@ LINUX_DEFCONFIG_COMMON_FILES := \
 
 linux-defconfig: $(LINUX_PATH)/.config
 
-LINUX_COMMON_FLAGS += ARCH=arm uImage LOADADDR=0xc2000000 \
+LINUX_COMMON_FLAGS += ARCH=arm zImage LOADADDR=0xc2000000 \
 		      CROSS_COMPILE=$(CROSS_COMPILE_NS_KERNEL) \
 		      $(STM32MP1_DTS_BASENAME).dtb \
 		      PATH=$$PATH:$(U_BOOT_PATH)/tools
