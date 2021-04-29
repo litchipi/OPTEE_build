@@ -202,13 +202,14 @@ LINUX_DEFCONFIG_COMMON_FILES := \
 
 linux-defconfig: $(LINUX_PATH)/.config
 
-LINUX_COMMON_FLAGS += ARCH=arm zImage LOADADDR=0xc2000000 \
+LINUX_COMMON_FLAGS += ARCH=arm uImage zImage LOADADDR=0xc2000000 \
 		      CROSS_COMPILE=$(CROSS_COMPILE_NS_KERNEL) \
 		      $(STM32MP1_DTS_BASENAME).dtb \
 		      PATH=$$PATH:$(U_BOOT_PATH)/tools
 
 linux: linux-common
 	@$(call install_in_binaries,$(LINUX_PATH)/arch/arm/boot/$(LINUX_KERNEL_BIN))
+	@$(call install_in_binaries,$(LINUX_PATH)/arch/arm/boot/uImage)
 	@$(call install_in_binaries,$(LINUX_PATH)/arch/arm/boot/dts/$(LINUX_DTB_BIN))
 
 linux-defconfig-clean: linux-defconfig-clean-common
@@ -270,6 +271,7 @@ copy_images_to_br: tfa optee-os u-boot linux
 	$(call install_in_br_images,$(TFA_BIN))
 	$(call install_in_br_images,$(U_BOOT_BIN))
 	$(call install_in_br_images,$(LINUX_KERNEL_BIN))
+	$(call install_in_br_images,uImage)
 	$(call install_in_br_images,$(LINUX_DTB_BIN))
 	$(call install_in_br_images,$(OPTEE_HEADER_BIN))
 	$(call install_in_br_images,$(OPTEE_PAGER_BIN))
