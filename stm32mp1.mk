@@ -1,6 +1,10 @@
+NDEBUG=1
+export NDEBUG
+
 # Path to EDK2 StMM component used to store UEFI variables
 CFG_STMM_PATH=$(EDK2_BIN)
 export CFG_STMM_PATH
+
 
 # Use RPMB to store Secure Storage filesystem
 CFG_RPMB_FS=y
@@ -9,6 +13,22 @@ export CFG_RPMB_FS
 # Device number to use to access RPMB (/dev/mmcblkX)
 CFG_RPMB_FS_DEV_ID=1
 export CFG_RPMB_FS_DEV_ID
+
+# Write key to RPMB if dont exist ?
+CFG_RPMB_WRITE_KEY=n
+export CFG_RPMB_WRITE_KEY
+
+# Reset Secure Storage filesystem at boot ?
+CFG_RPMB_RESET_FAT=y
+export CFG_RPMB_RESET_FAT
+
+# Use Testkey instead of hardware ID generated one ?
+CFG_RPMB_TESTKEY=n
+export CFG_RPMB_TESTKEY
+
+CFG_ENABLE_EMBEDDED_TESTS=y
+export CFG_ENABLE_EMBEDDED_TESTS
+
 ################################################################################
 # Following variables defines how the NS_USER (Non Secure User - Client
 # Application), NS_KERNEL (Non Secure Kernel), S_KERNEL (Secure Kernel) and
