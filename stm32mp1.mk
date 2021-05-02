@@ -19,7 +19,7 @@ CFG_RPMB_WRITE_KEY=n
 export CFG_RPMB_WRITE_KEY
 
 # Reset Secure Storage filesystem at boot ?
-CFG_RPMB_RESET_FAT=y
+CFG_RPMB_RESET_FAT=n
 export CFG_RPMB_RESET_FAT
 
 # Use Testkey instead of hardware ID generated one ?
@@ -28,6 +28,9 @@ export CFG_RPMB_TESTKEY
 
 CFG_ENABLE_EMBEDDED_TESTS=y
 export CFG_ENABLE_EMBEDDED_TESTS
+
+# Disable RPMB emulation in optee_client
+BR2_PACKAGE_OPTEE_CLIENT_EXT_HW_RPMB=y
 
 ################################################################################
 # Following variables defines how the NS_USER (Non Secure User - Client
