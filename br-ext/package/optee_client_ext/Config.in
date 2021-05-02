@@ -8,3 +8,9 @@ config BR2_PACKAGE_OPTEE_CLIENT_EXT_SITE
 	default ""
 	help
 	  The path to the source directory of OP-TEE client
+
+config BR2_PACKAGE_OPTEE_CLIENT_EXT_HW_RPMB
+	bool "Enable real RPMB device"
+	help
+	  Enable real RPMB device support by disabling the RPMB emulation in
+	  tee-supplicant.
