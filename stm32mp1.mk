@@ -174,12 +174,12 @@ define edk2-call
 	echo "========================================================================" && \
 	echo "= PATH=$(PATH)" && \
 	echo "build -n(...) -a $(EDK2_ARCH)" && \
-        echo "  -t $(EDK2_TOOLCHAIN) -p Platform/StMMRpmb/PlatformStandaloneMm.dsc" && \
+        echo "  -t $(EDK2_TOOLCHAIN) -p Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc" && \
         echo "  -b $(EDK2_BUILD) -D DO_X86EMU=TRUE" && \
 	echo "========================================================================" && \
         $(EDK2_TOOLCHAIN)_$(EDK2_ARCH)_PREFIX=$(AARCH32_CROSS_COMPILE) \
         build -n `getconf _NPROCESSORS_ONLN` -a $(EDK2_ARCH) \
-                -t $(EDK2_TOOLCHAIN) -p Platform/StMMRpmb/PlatformStandaloneMm.dsc \
+                -t $(EDK2_TOOLCHAIN) -p Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc \
                 -b $(EDK2_BUILD) -D DO_X86EMU=TRUE
 endef
 
