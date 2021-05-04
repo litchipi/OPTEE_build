@@ -4,6 +4,7 @@ DAEMON="tee-supplicant"
 DAEMON_PATH="/usr/sbin"
 DAEMON_ARGS="-d /dev/teepriv0"
 PIDFILE="/var/run/$DAEMON.pid"
+MMC_DEV_ID="1"
 
 start() {
 	# tee-supplicant and the client applications need not run as
@@ -20,8 +21,9 @@ start() {
 		return "$status"
 	fi
 
-    echo "Set permissions on all RPMB devices"
-    chown root:tee /dev/mmcblk*rpmb && chmod 0660 /dev/mmcblk*rpmb
+	printf 'Set permissions on device /dev/mmcblk%d for group "disk": ' "${MMC_DEV_ID}"
+	chown root:disk /dev/mmcblk${MMC_DEV_ID}rpmb && chmod 0660 /dev/mmcblk${MMC_DEV_ID}rpmb && \
+		chown root:disk /dev/mmcblk${MMC_DEV_ID} && chmod 0660 /dev/mmcblk${MMC_DEV_ID} && \
 	status=$?
 	if [ "$status" -eq 0 ]; then
 		echo "OK"
