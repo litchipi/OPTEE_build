@@ -5,7 +5,6 @@ export NDEBUG
 CFG_STMM_PATH=$(EDK2_BIN)
 export CFG_STMM_PATH
 
-
 # Use RPMB to store Secure Storage filesystem
 CFG_RPMB_FS=y
 export CFG_RPMB_FS
@@ -275,6 +274,8 @@ BR2_PACKAGE_OPTEE_CLIENT=n
 BR2_PACKAGE_OPTEE_TEST=n
 BR2_PACKAGE_OPTEE_EXAMPLES=n
 BR2_PACKAGE_OPTEE_BENCHMARK=n
+BR2_PACKAGE_LIBCAP=y
+BR2_PACKAGE_LIBCAP_TOOLS=y
 
 ################################################################################
 # We build the SD card image from Builroot but TF-A, OP-TEE OS, U-Boot and
