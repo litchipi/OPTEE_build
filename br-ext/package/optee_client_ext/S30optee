@@ -6,6 +6,8 @@ DAEMON_ARGS="-d /dev/teepriv0"
 PIDFILE="/var/run/$DAEMON.pid"
 MMC_DEV_ID="1"
 
+setcap cap_sys_rawio=pe $DAEMON_PATH/$DAEMON
+
 start() {
 	# tee-supplicant and the client applications need not run as
 	# root provided that the TEE devices and the data store have
